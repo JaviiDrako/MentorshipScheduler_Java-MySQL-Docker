@@ -69,7 +69,9 @@ public class StudentMenu {
         boolean backMenu = false;
 
         while(!backMenu) {
-            System.out.println("==== Scheduled Mentorships ====");
+            System.out.println("╔═════════════════════════════════════════════════════════════════════════════════════════╗");
+            System.out.println("║================================= Scheduled Mentorships =================================║");
+            System.out.println("╚═════════════════════════════════════════════════════════════════════════════════════════╝");
 
             List<String> mentorships = studentDAO.getMentorships(student.getId());
 
@@ -77,18 +79,19 @@ public class StudentMenu {
                 System.out.println("There are no scheduled mentorships");
                 System.out.println();
             } else {
-                System.out.printf("| %-12s | %-25s | %-20s | %-20s |%n", "Mentorship ID", "Subject", "Date", "Tutor");
-                System.out.println("------------------------------------------------------------------------------------------");
+                System.out.printf("| %-13s | %-25s | %-20s | %-20s |%n", "Mentorship ID", "Subject", "Date", "Tutor");
+                System.out.println("-------------------------------------------------------------------------------------------");
 
                 for (String m : mentorships) {
                     String[] parts = m.split(",");
                     String id = parts[0];
-                    String nombre = parts[1];
-                    String fecha = parts[2];
-                    String tutor = parts[3];
+                    String subjectName = parts[1];
+                    String date = parts[2];
+                    String tutorName = parts[3];
 
-                    System.out.printf("| %-12s | %-25s | %-20s | %-20s |%n", id, nombre, fecha, tutor);
+                    System.out.printf("| %-13s | %-25s | %-20s | %-20s |%n", id, subjectName, date, tutorName);
                 }
+                System.out.println();
             }
 
             System.out.println("╔═══════════════════════════════════════╗");
@@ -162,7 +165,10 @@ public class StudentMenu {
     public void showAvailableSubjects() {
         List<String> subjects = studentDAO.getAvailableSubjectsByTerm(student.getTerm());
 
-        System.out.println("========= Available Subjects for Term "+ student.getTerm() + " =========");
+        System.out.println("╔═════════════════════════════════════════╗");
+        System.out.println("║===== Available Subjects for Term "+ student.getTerm() + " =====║");
+        System.out.println("╚═════════════════════════════════════════╝");
+
         System.out.printf("| %-8s | %-28s |%n", "ID", "Nombre");
         System.out.println("-------------------------------------------");
 
@@ -176,9 +182,11 @@ public class StudentMenu {
     }
 
     public void showAvailableMentorships(List<String> mentorships) {
-        System.out.println("======================== Tutorías Disponibles ========================");
-        System.out.printf("| %-13s | %-18s | %-18s | %-18s |%n", "ID Tutoria", "Tutor", "Materia", "Fecha");
-        System.out.println("-------------------------------------------------------------------------");
+        System.out.println("╔═══════════════════════════════════════════════════════════════════════════════╗");
+        System.out.println("║============================ Available Mentorships ============================║");
+        System.out.println("╚═══════════════════════════════════════════════════════════════════════════════╝");
+        System.out.printf("| %-13s | %-18s | %-18s | %-19s |%n", "Mentorship ID", "Tutor", "Subject", "Date");
+        System.out.println("---------------------------------------------------------------------------------");
 
         for (String m : mentorships) {
             String[] parts = m.split(",");
@@ -189,6 +197,7 @@ public class StudentMenu {
 
             System.out.printf("| %-13s | %-18s | %-18s | %-18s |%n", id, tutor, materia, fecha);
         }
+        System.out.println();
     }
 
     public int getValidId(String option) {
@@ -200,7 +209,7 @@ public class StudentMenu {
                 parsedId = Integer.parseInt(option);
             } catch (NumberFormatException e) {
                 System.out.println();
-                System.out.println(ANSI_RED + "--- ID inválido." + ANSI_RESET);
+                System.out.println(ANSI_RED + "--- Invalid ID." + ANSI_RESET);
             }
             System.out.println();
         }
@@ -211,8 +220,8 @@ public class StudentMenu {
         int mentorshipId;
         boolean backMenu = false;
         while(!backMenu) {
-            System.out.println("╔════════════════════════════════════════════════════════════════════════╗");
-            System.out.println("║ Ingrese el ID de la tutoría que desea cancelar o escriba 0 para salir: ║");
+            System.out.println("╔════════════════════════════════════════════════════════════════╗");
+            System.out.println("║ Enter the mentorship ID you want to cancel, or type 0 to exit: ║");
             System.out.print("╚> ");
             mentorshipId = getValidId(scanner.nextLine());
 

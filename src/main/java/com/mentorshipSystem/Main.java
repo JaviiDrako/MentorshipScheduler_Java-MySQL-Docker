@@ -17,13 +17,13 @@ public class Main {
         boolean exit = false;
 
         while (!exit) {
-            System.out.println("╔═══════════════════════════════════════════╗");
-            System.out.println("║==== Welcome to the Mentorships System ====║");
-            System.out.println("╠═══════════════════════════════════════════╣");
-            System.out.println("║ 1. Sign in                                ║");
-            System.out.println("║ 2. Log in                                 ║");
-            System.out.println("║ 3. Exit                                   ║");
-            System.out.println("╚═══════════════════════════════════════════╝");
+            System.out.println("╔════════════════════════════════════════════╗");
+            System.out.println("║==== Welcome to the MentorshipScheduler ====║");
+            System.out.println("╠════════════════════════════════════════════╣");
+            System.out.println("║ 1. Sign in                                 ║");
+            System.out.println("║ 2. Log in                                  ║");
+            System.out.println("║ 3. Exit                                    ║");
+            System.out.println("╚════════════════════════════════════════════╝");
             System.out.print("Choose one option: ");
             String option = scanner.nextLine();
 

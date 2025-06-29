@@ -113,11 +113,9 @@ public class TutorMenu {
         int subjectId = Integer.parseInt(scanner.nextLine());
 
         System.out.print("Ingrese fecha y hora (formato: yyyy-MM-dd HH:mm:ss): ");
-        String dateTimeStr = scanner.nextLine();
+        String dateTime = scanner.nextLine();
 
-        Timestamp timestamp = Timestamp.valueOf(dateTimeStr);
-
-        String result = tutorDAO.createMentorship("Disponible", timestamp, tutorId, subjectId);
+        String result = tutorDAO.createMentorship(dateTime, tutorId, subjectId);
         System.out.println(result);
     }
 
@@ -126,7 +124,10 @@ public class TutorMenu {
         System.out.print("Nombre de la materia: ");
         String subjectName = scanner.nextLine();
 
-        String result = tutorDAO.registerSubject(subjectName);
+        System.out.print("Enter subject term: ");
+        String subjectTerm = scanner.nextLine(); //Fix make a paser method
+
+        String result = tutorDAO.registerSubject(subjectName, 1); 
         System.out.println(result);
     }
 

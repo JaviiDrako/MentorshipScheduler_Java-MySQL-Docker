@@ -59,8 +59,8 @@ public class StudentDAO {
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
                     int id = rs.getInt("mentorship_id");
-                    String tutor = rs.getString("name");
-                    String subject = rs.getString("name");
+                    String tutor = rs.getString("t.name");
+                    String subject = rs.getString("s.name");
                     String date = rs.getString("date_time");
                     freeMentorships.add(id + "," + tutor + "," + subject + "," + date);
                 }
@@ -118,9 +118,9 @@ public class StudentDAO {
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
                     int mentorshipId = rs.getInt("mentorship_id");
-                    String subjectName = rs.getString("name");
+                    String subjectName = rs.getString("s.name");
                     String dateTimeMentorship = rs.getString("date_time");
-                    String tutorName = rs.getString("name");
+                    String tutorName = rs.getString("t.name");
                     mentorships.add(mentorshipId + "," + subjectName + "," + dateTimeMentorship + "," + tutorName);
                 }
             } catch (SQLException e) {
