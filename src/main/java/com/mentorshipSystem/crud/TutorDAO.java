@@ -60,13 +60,14 @@ public class TutorDAO {
 
     public List<String> getAllSubjects() {
         List<String> subjects = new ArrayList<>();
-        String sqlQuery = "SELECT subject_id, name FROM Subjects";
+        String sqlQuery = "SELECT * FROM Subjects";
 
         try (Connection conn = dbManager.connect(); PreparedStatement statement = conn.prepareStatement(sqlQuery); ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("subject_id");
                 String name = rs.getString("name");
-                subjects.add(id + "," + name);
+                int term = rs.getInt("term");
+                subjects.add(id + "," + name + "," + term);
             }
         } catch (SQLException e) {
             System.out.println("Error establishing connection or preparing query: " + e.getMessage());
@@ -93,9 +94,10 @@ public class TutorDAO {
 
     public List<String> getMentorships(int tutorId) {
         List<String> mentorships = new ArrayList<>();
-        String sqlQuery = "SELECT m.mentorship_id, s.name " +
+        String sqlQuery = "SELECT m.mentorship_id, s.name, st.name, m.date_time " +
                 "FROM Mentorships m " +
                 "JOIN Subjects s ON m.subject_id = s.subject_id " +
+                "LEFT JOIN Students st ON m.student_id = st.student_id " +
                 "WHERE m.tutor_id = ?";
 
         try (Connection conn = dbManager.connect(); PreparedStatement statement = conn.prepareStatement(sqlQuery)) {
@@ -103,8 +105,10 @@ public class TutorDAO {
             try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
                     int idMentorship = rs.getInt("mentorship_id");
-                    String subjectName = rs.getString("name");
-                    mentorships.add(idMentorship + "," + subjectName);
+                    String subjectName = rs.getString("s.name");
+                    String studentName = rs.getString("st.name");
+                    String date = rs.getString("m.date_time");
+                    mentorships.add(idMentorship + "," + subjectName + "," + studentName + "," + date);
                 }
             }
         } catch (SQLException e) {

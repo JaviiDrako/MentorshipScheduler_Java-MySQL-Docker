@@ -127,12 +127,18 @@ public class StudentMenu {
         boolean backMenu = false;
         while(!backMenu) {
             showAvailableSubjects();
+
             System.out.println("╔════════════════════════════════════════════════════════════════════════════════╗");
             System.out.println("║ Enter the subject ID you want to schedule a mentorship for, or type 0 to exit: ║");
             System.out.print("╚> ");
             subjectId = getValidId(scanner.nextLine());
-            if (subjectId == -1) {
-                backMenu = true;
+
+            if (subjectId < 1) {
+                if (subjectId == 0) {
+                    backMenu = true;
+                }else {
+                    continue;
+                }
             }else{
                 List<String> mentorships = studentDAO.getAvailableMentorshipsBySubject(subjectId);
                 if(mentorships.isEmpty()) {
@@ -145,8 +151,12 @@ public class StudentMenu {
                     System.out.println("║ Enter the mentorship ID you want to schedule, or type 0 to exit: ║");
                     System.out.print("╚> ");
                     mentorshipId = getValidId(scanner.nextLine());
-                    if (mentorshipId == -1) {
-                        backMenu = true;
+                    if (mentorshipId < 1) {
+                        if (mentorshipId == 0) {
+                            backMenu = true;
+                        }else {
+                            continue;
+                        }
                     }else{
                         String result = studentDAO.scheduleMentorship(mentorshipId, student.getId());
                         if (result.charAt(0) == '+'){
@@ -225,8 +235,12 @@ public class StudentMenu {
             System.out.print("╚> ");
             mentorshipId = getValidId(scanner.nextLine());
 
-            if (mentorshipId == -1) {
-                backMenu = true;
+            if (mentorshipId < 1) {
+                if (mentorshipId == 0) {
+                    backMenu = true;
+                }else {
+                    continue;
+                }
             }else{
                 String result = studentDAO.cancelMentorship(mentorshipId);
                 if (result.charAt(0) == '+'){
