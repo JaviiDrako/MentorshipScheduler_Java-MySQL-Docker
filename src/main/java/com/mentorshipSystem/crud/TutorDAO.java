@@ -1,5 +1,7 @@
 package com.mentorshipSystem.crud;
 
+import com.mentorshipSystem.models.Tutor;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,29 @@ public class TutorDAO {
         }catch(SQLException e){
             System.out.println("Error establishing connection or preparing query: " + e.getMessage());
         }
+    }
+
+    public Tutor getTutorInfo(int userId) {
+        String sqlQuery = "SELECT * FROM Tutors WHERE user_id = ?";
+        Tutor tutor = null;
+        try (Connection conn = dbManager.connect(); PreparedStatement statement = conn.prepareStatement(sqlQuery)) {
+            statement.setInt(1, userId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    tutor = new Tutor(rs.getInt("tutor_id"),
+                            rs.getString("name"),
+                            rs.getString("area"),
+                            rs.getString("phone_number"));
+                } else {
+                    throw new SQLException("User id not found");
+                }
+            } catch (SQLException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Error establishing connection or preparing query: " + e.getMessage());
+        }
+        return tutor;
     }
 
     public int getTutorId(int userId) {
@@ -41,7 +66,7 @@ public class TutorDAO {
     }
 
     public String createMentorship(String dateTime, int tutorId, int subjectId) {
-        String sqlInsert = "INSERT INTO Mentorships (date_time, tutor_id, subject_id) VALUES (?, ?, ?, ?)";
+        String sqlInsert = "INSERT INTO Mentorships (date_time, tutor_id, subject_id) VALUES (?, ?, ?)";
         try (Connection conn = dbManager.connect(); PreparedStatement statement = conn.prepareStatement(sqlInsert)) {
             statement.setString(1, dateTime);
             statement.setInt(2, tutorId);
@@ -94,7 +119,7 @@ public class TutorDAO {
 
     public List<String> getMentorships(int tutorId) {
         List<String> mentorships = new ArrayList<>();
-        String sqlQuery = "SELECT m.mentorship_id, s.name, st.name, m.date_time " +
+        String sqlQuery = "SELECT m.mentorship_id, s.name, st.name, m.date_time, m.state " +
                 "FROM Mentorships m " +
                 "JOIN Subjects s ON m.subject_id = s.subject_id " +
                 "LEFT JOIN Students st ON m.student_id = st.student_id " +
@@ -108,13 +133,29 @@ public class TutorDAO {
                     String subjectName = rs.getString("s.name");
                     String studentName = rs.getString("st.name");
                     String date = rs.getString("m.date_time");
-                    mentorships.add(idMentorship + "," + subjectName + "," + studentName + "," + date);
+                    String state = rs.getString("m.state");
+                    mentorships.add(idMentorship + "," + subjectName + "," + studentName + "," + date + "," + state);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return mentorships;
+    }
+
+    public String cancelMentorship(int mentorshipId) {
+        String sqlUpdate = "UPDATE Mentorships SET state = 'Canceled' WHERE mentorship_id = ?";
+        try (Connection conn = dbManager.connect(); PreparedStatement statement = conn.prepareStatement(sqlUpdate)) {
+            statement.setInt(1, mentorshipId);
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                return "+++ Mentorship succesfully canceled.";
+            } else {
+                return "--- Error: There is no mentorship found with that id.";
+            }
+        } catch (SQLException e) {
+            return "Error procesing cancellation: " + e.getMessage();
+        }
     }
 }
 

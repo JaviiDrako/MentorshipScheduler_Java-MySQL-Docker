@@ -1,10 +1,10 @@
 package com.mentorshipSystem.crud;
 
+import com.mentorshipSystem.models.Student;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.mentorshipSystem.models.Student;
 
 public class StudentDAO {
     private DBConnectionManager dbManager = new DBConnectionManager();
@@ -29,7 +29,7 @@ public class StudentDAO {
             statement.setInt(1, userId);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    student = new Student(rs.getInt("user_id"),
+                    student = new Student(rs.getInt("student_id"),
                             rs.getString("name"),
                             rs.getInt("term"),
                             rs.getString("phone_number"));
@@ -51,7 +51,7 @@ public class StudentDAO {
                 "FROM Mentorships m " +
                 "JOIN Tutors t ON m.tutor_id = t.tutor_id " +
                 "JOIN Subjects s ON m.subject_id = s.subject_id " +
-                "WHERE m.student_id IS NULL AND s.subject_id = ? " +
+                "WHERE m.student_id IS NULL AND s.subject_id = ? AND m.state != 'Canceled' " +
                 "ORDER BY m.mentorship_id ASC";
 
         try (Connection conn = dbManager.connect(); PreparedStatement statement = conn.prepareStatement(sqlQuery)) {

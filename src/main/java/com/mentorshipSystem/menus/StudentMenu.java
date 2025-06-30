@@ -76,8 +76,9 @@ public class StudentMenu {
             List<String> mentorships = studentDAO.getMentorships(student.getId());
 
             if (mentorships.isEmpty()) {
-                System.out.println("There are no scheduled mentorships");
+                System.out.println("----------------------------There are no scheduled mentorships-----------------------------");
                 System.out.println();
+                backMenu = true;
             } else {
                 System.out.printf("| %-13s | %-25s | %-20s | %-20s |%n", "Mentorship ID", "Subject", "Date", "Tutor");
                 System.out.println("-------------------------------------------------------------------------------------------");
@@ -122,8 +123,6 @@ public class StudentMenu {
     }
 
     public void scheduleMentorship(Scanner scanner) {
-        int subjectId = 0;
-        int mentorshipId = 0;
         boolean backMenu = false;
         while(!backMenu) {
             showAvailableSubjects();
@@ -131,7 +130,7 @@ public class StudentMenu {
             System.out.println("╔════════════════════════════════════════════════════════════════════════════════╗");
             System.out.println("║ Enter the subject ID you want to schedule a mentorship for, or type 0 to exit: ║");
             System.out.print("╚> ");
-            subjectId = getValidId(scanner.nextLine());
+            int subjectId = getValidId(scanner.nextLine());
 
             if (subjectId < 1) {
                 if (subjectId == 0) {
@@ -150,7 +149,8 @@ public class StudentMenu {
                     System.out.println("╔══════════════════════════════════════════════════════════════════╗");
                     System.out.println("║ Enter the mentorship ID you want to schedule, or type 0 to exit: ║");
                     System.out.print("╚> ");
-                    mentorshipId = getValidId(scanner.nextLine());
+                    int mentorshipId = getValidId(scanner.nextLine());
+
                     if (mentorshipId < 1) {
                         if (mentorshipId == 0) {
                             backMenu = true;
@@ -159,6 +159,7 @@ public class StudentMenu {
                         }
                     }else{
                         String result = studentDAO.scheduleMentorship(mentorshipId, student.getId());
+                        System.out.println();
                         if (result.charAt(0) == '+'){
                             System.out.println(ANSI_GREEN + result + ANSI_RESET);
                         }else{
@@ -213,7 +214,7 @@ public class StudentMenu {
     public int getValidId(String option) {
         int parsedId = -1;
         if (option.equals("0") ) {
-            return parsedId;
+            return parsedId = 0;
         }else{
             try {
                 parsedId = Integer.parseInt(option);

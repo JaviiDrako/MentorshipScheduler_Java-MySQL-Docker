@@ -59,7 +59,7 @@ public class TutorMenu {
                     createMentorship(scanner);
                     break;
                 case "4":
-                    registerSubject(scanner);
+                    registerSubject(scanner, 0);
                     break;
                 case "5":
                     System.out.println("Logging out...");
@@ -77,7 +77,9 @@ public class TutorMenu {
         boolean backMenu = false;
 
         while(!backMenu) {
-            System.out.println("==== Ver tutorías registradas ====");
+            System.out.println("╔═════════════════════════════════════════════════════════════════════════════════════════════════════════╗");
+            System.out.println("║========================================= Registered Mentorships ========================================║");
+            System.out.println("╚═════════════════════════════════════════════════════════════════════════════════════════════════════════╝");
 
             List<String> mentorships = tutorDAO.getMentorships(tutor.getId());
 
@@ -85,17 +87,21 @@ public class TutorMenu {
                 System.out.println("There are no registered mentorships");
                 System.out.println();
             } else {
-                System.out.printf("| %-13s | %-25s | %-20s | %-20s |%n", "Mentorship ID", "Subject", "Student", "Date");
-                System.out.println("-------------------------------------------------------------------------------------------");
+                System.out.printf("| %-13s | %-25s | %-20s | %-20s | %-13s |%n", "Mentorship ID", "Subject", "Student", "Date", "State");
+                System.out.println("-----------------------------------------------------------------------------------------------------------");
 
                 for (String m : mentorships) {
                     String[] parts = m.split(",");
                     String id = parts[0];
                     String subjectName = parts[1];
                     String studentName = parts[2];
+                    if(studentName.equals("null")){
+                        studentName = "No student yet";
+                    }
                     String date = parts[3];
+                    String state = parts[4];
 
-                    System.out.printf("| %-13s | %-25s | %-20s | %-20s |%n", id, subjectName, studentName, date);
+                    System.out.printf("| %-13s | %-25s | %-20s | %-20s | %-13s |%n", id, subjectName, studentName, date, state);
                 }
                 System.out.println();
             }
@@ -150,7 +156,7 @@ public class TutorMenu {
 
             switch (option) {
                 case "1":
-                    registerSubject(scanner);
+                    registerSubject(scanner, 1);
                     backMenu = true;
                     break;
                 case "2":
@@ -190,6 +196,7 @@ public class TutorMenu {
                     backMenu = true; 
                 }else{
                     String result = tutorDAO.createMentorship(date, tutor.getId(), subjectId);
+                    System.out.println();
                     if (result.charAt(0) == '+'){
                         System.out.println(ANSI_GREEN + result + ANSI_RESET);
                     }else{
@@ -202,20 +209,68 @@ public class TutorMenu {
         }
     }
 
-    private void registerSubject(Scanner scanner) {
-        System.out.println("==== Registrar Nueva Materia ====");
-        System.out.print("Nombre de la materia: ");
-        String subjectName = scanner.nextLine();
+    private void registerSubject(Scanner scanner, int guide) {
+        boolean backMenu = false;
+        while(!backMenu) {
+            if (guide == 0) {
+                printSubjects();
+            }
+            System.out.println("╔═══════════════════════════════════════════════════════════════╗");
+            System.out.println("║ Enter the name of the subject to register, or type 0 to exit: ║");
+            System.out.print("╚> ");
+            String subjectName = scanner.nextLine();
 
-        System.out.print("Enter subject term: ");
-        String subjectTerm = scanner.nextLine(); //Fix make a paser method
+            if (subjectName.equals("0")) {
+                backMenu = true;
+            }else{
+                System.out.println("╔═══════════════════════════════════════════════════════════════╗");
+                System.out.println("║ Enter the term of the subject to register, or type 0 to exit: ║");
+                System.out.print("╚> ");
+                int subjectTerm = getValidId(scanner.nextLine()); 
+                if (subjectTerm == 0) {
+                    backMenu = true; 
+                }else{
+                    String result = tutorDAO.registerSubject(subjectName, subjectTerm);
+                    if (result.charAt(0) == '+'){
+                        System.out.println(ANSI_GREEN + result + ANSI_RESET);
+                    }else{
+                        System.out.println(ANSI_RED + result + ANSI_RESET);
+                    }
+                    System.out.println();
+                    backMenu = true;
+                }
+            }
+        }
+    }
 
-        String result = tutorDAO.registerSubject(subjectName, 1); 
-        System.out.println(result);
+    private void cancelMentorship(Scanner scanner){
+        boolean backMenu = false;
+        while(!backMenu) {
+            System.out.println("╔════════════════════════════════════════════════════════════════╗");
+            System.out.println("║ Enter the mentorship ID you want to cancel, or type 0 to exit: ║");
+            System.out.print("╚> ");
+            int mentorshipId = getValidId(scanner.nextLine());
+
+            if (mentorshipId == 0) {
+                backMenu = true;
+            }else{
+                String result = tutorDAO.cancelMentorship(mentorshipId);
+                System.out.println();
+                if (result.charAt(0) == '+'){
+                    System.out.println(ANSI_GREEN + result + ANSI_RESET);
+                }else{
+                    System.out.println(ANSI_RED + result + ANSI_RESET);
+                }
+                System.out.println();
+                backMenu = true;
+            }
+        }
     }
 
     private void printSubjects(){
-        System.out.println("==== Available Subjects ====");
+        System.out.println("╔════════════════════════════════════════════════════════╗");
+        System.out.println("║================== Available Subjects ==================║");
+        System.out.println("╚════════════════════════════════════════════════════════╝");
 
         List<String> subjects = tutorDAO.getAllSubjects();
 
@@ -223,8 +278,8 @@ public class TutorMenu {
             System.out.println("There are no registered subjects");
             System.out.println();
         } else {
-            System.out.printf("| %-13s | %-25s | %-20s |%n", "Subject ID", "Subject", "Term");
-            System.out.println("-------------------------------------------------------------------------------------------");
+            System.out.printf("| %-13s | %-25s | %-10s |%n", "Subject ID", "Subject", "Term");
+            System.out.println("----------------------------------------------------------");
 
             for (String m : subjects) {
                 String[] parts = m.split(",");
@@ -232,7 +287,7 @@ public class TutorMenu {
                 String subjectName = parts[1];
                 String term = parts[2];
 
-                System.out.printf("| %-13s | %-25s | %-20s |%n", id, subjectName, term);
+                System.out.printf("| %-13s | %-25s | %-10s |%n", id, subjectName, term);
             }
             System.out.println();
         }
@@ -241,7 +296,7 @@ public class TutorMenu {
     public int getValidId(String option) {
         int parsedId = -1;
         if (option.equals("0") ) {
-            return parsedId;
+            return parsedId = 0;
         }else{
             try {
                 parsedId = Integer.parseInt(option);

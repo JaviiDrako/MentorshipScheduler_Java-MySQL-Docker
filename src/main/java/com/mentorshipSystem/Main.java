@@ -6,6 +6,7 @@ import com.mentorshipSystem.crud.UserDAO;
 import com.mentorshipSystem.menus.TutorMenu;
 import com.mentorshipSystem.menus.StudentMenu;
 import com.mentorshipSystem.models.Student;
+import com.mentorshipSystem.models.Tutor;
 
 import java.util.Scanner;
 
@@ -73,6 +74,7 @@ public class Main {
         TutorDAO tutorDAO = new TutorDAO();
         StudentDAO studentDAO = new StudentDAO();
         Student student = null;
+        Tutor tutor = null;
 
         System.out.println("╔════════════════════════════════════════════╗");
         System.out.println("║================ User Login ================║");
@@ -94,8 +96,8 @@ public class Main {
                 StudentMenu studentMenu = new StudentMenu(studentDAO, student);
                 studentMenu.showStudentMenu(scanner);
             }else{
-                int id = tutorDAO.getTutorId(userId);
-                TutorMenu tutorMenu = new TutorMenu(id, "");
+                tutor = tutorDAO.getTutorInfo(userId);
+                TutorMenu tutorMenu = new TutorMenu(tutorDAO, tutor);
                 tutorMenu.showTutorMenu(scanner);
             }
         }else{
